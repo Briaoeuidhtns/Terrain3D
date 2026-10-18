@@ -151,6 +151,10 @@ void Terrain3DData::do_for_regions(const Rect2i &p_area, const Callable &p_callb
 
 void Terrain3DData::change_region_size(int p_new_size) {
 	LOG(INFO, "Changing region size from: ", _region_size, " to ", p_new_size);
+	if (!_terrain || !_terrain->is_inside_tree() || _terrain->get_data() != this) {
+		LOG(ERROR, "Cannot reslice regions before Terrain3DData is initialized by a Terrain3D node in the scene tree");
+		return;
+	}
 	if (!is_valid_region_size(p_new_size)) {
 		LOG(ERROR, "Invalid region size: ", p_new_size, ". Must be power of 2, 64-2048");
 		return;

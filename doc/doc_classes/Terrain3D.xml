@@ -19,6 +19,13 @@
 				[code skip-lint]filter[/code] - Controls how vertex Y coordinates are generated from the height map. See [enum Terrain3DData.HeightFilter].
 			</description>
 		</method>
+		<method name="change_region_size">
+			<return type="void" />
+			<param index="0" name="size" type="int" enum="Terrain3D.RegionSize" />
+			<description>
+				Reslices loaded regions after the terrain has initialized in the scene tree. Before initialization, logs an error and leaves the data unchanged. The scene's [code skip-lint]region_size[/code] is not a storage property; region files determine the initial size.
+			</description>
+		</method>
 		<method name="generate_nav_mesh_source_geometry" qualifiers="const">
 			<return type="PackedVector3Array" />
 			<param index="0" name="global_aabb" type="AABB" />
@@ -287,6 +294,7 @@
 		</member>
 		<member name="region_size" type="int" setter="change_region_size" getter="get_region_size" enum="Terrain3D.RegionSize" default="256">
 			The number of vertices in each region, and the number of pixels for each map in [Terrain3DRegion]. 1 pixel always corresponds to 1 vertex. [member Terrain3D.vertex_spacing] laterally scales regions, but does not change the number of vertices or pixels in each.
+			This is an editor-only operation, not a serialized scene setting. The region size is loaded from the region files in [member data_directory]. Reslicing requires the terrain to be initialized in the scene tree; setting [code skip-lint]region_size[/code] in a scene file before initialization is rejected. Use the inspector or [method change_region_size] after the terrain has entered the tree.
 			There is no undo for this operation. However you can apply it again to reslice, as long as your data doesn't hit the maximum boundaries.
 		</member>
 		<member name="render_layers" type="int" setter="set_render_layers" getter="get_render_layers" default="2147483649">

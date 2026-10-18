@@ -590,6 +590,14 @@ void Terrain3D::set_plugin(Object *p_plugin) {
 	LOG(INFO, "Setting Editor Plugin: ", _editor_plugin);
 }
 
+void Terrain3D::change_region_size(const RegionSize p_size) {
+	if (!_initialized || !_data || _data->_terrain != this) {
+		LOG(ERROR, "Cannot reslice regions before Terrain3D has entered the scene tree and initialized its data. Region size is loaded from region files; do not serialize the editor-only region_size property.");
+		return;
+	}
+	_data->change_region_size(p_size);
+}
+
 void Terrain3D::set_region_size(const RegionSize p_size) {
 	if (!is_valid_region_size(p_size)) {
 		LOG(ERROR, "Invalid region size: ", p_size, ". Must be power of 2, 64-2048");
