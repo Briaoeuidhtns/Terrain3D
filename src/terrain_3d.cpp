@@ -57,6 +57,8 @@ void Terrain3D::_initialize() {
 		_data->initialize(this);
 		_material->initialize(this);
 		_assets->initialize(this);
+		// Initial asset signals fire before connections are safe; bind their arrays now.
+		_material->update(Terrain3DMaterial::TEXTURE_ARRAYS);
 		_collision->initialize(this);
 		_instancer->initialize(this);
 		_setup_terrain_mesher();
