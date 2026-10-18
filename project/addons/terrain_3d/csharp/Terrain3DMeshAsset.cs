@@ -95,7 +95,7 @@ public partial class Terrain3DMeshAsset : Terrain3DAssetResource
 	}
 
 	public new delegate void IdChangedSignalHandler(long type, long oldId, long newId);
-	private IdChangedSignalHandler _idChangedSignal;
+	private IdChangedSignalHandler? _idChangedSignal;
 	private Callable _idChangedSignalCallable;
 	public event IdChangedSignalHandler IdChangedSignal
 	{
@@ -119,7 +119,7 @@ public partial class Terrain3DMeshAsset : Terrain3DAssetResource
 	}
 
 	public new delegate void SettingChangedSignalHandler(long id);
-	private SettingChangedSignalHandler _settingChangedSignal;
+	private SettingChangedSignalHandler? _settingChangedSignal;
 	private Callable _settingChangedSignalCallable;
 	public event SettingChangedSignalHandler SettingChangedSignal
 	{
@@ -143,7 +143,7 @@ public partial class Terrain3DMeshAsset : Terrain3DAssetResource
 	}
 
 	public new delegate void InstancerSettingChangedSignalHandler(long id);
-	private InstancerSettingChangedSignalHandler _instancerSettingChangedSignal;
+	private InstancerSettingChangedSignalHandler? _instancerSettingChangedSignal;
 	private Callable _instancerSettingChangedSignalCallable;
 	public event InstancerSettingChangedSignalHandler InstancerSettingChangedSignal
 	{
@@ -167,7 +167,7 @@ public partial class Terrain3DMeshAsset : Terrain3DAssetResource
 	}
 
 	public new delegate void InstanceCountChangedSignalHandler();
-	private InstanceCountChangedSignalHandler _instanceCountChangedSignal;
+	private InstanceCountChangedSignalHandler? _instanceCountChangedSignal;
 	private Callable _instanceCountChangedSignalCallable;
 	public event InstanceCountChangedSignalHandler InstanceCountChangedSignal
 	{

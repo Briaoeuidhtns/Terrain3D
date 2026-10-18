@@ -84,7 +84,7 @@ public partial class Terrain3DTextureAsset : Terrain3DAssetResource
 	}
 
 	public new delegate void IdChangedSignalHandler(long type, long oldId, long newId);
-	private IdChangedSignalHandler _idChangedSignal;
+	private IdChangedSignalHandler? _idChangedSignal;
 	private Callable _idChangedSignalCallable;
 	public event IdChangedSignalHandler IdChangedSignal
 	{
@@ -108,7 +108,7 @@ public partial class Terrain3DTextureAsset : Terrain3DAssetResource
 	}
 
 	public new delegate void FileChangedSignalHandler();
-	private FileChangedSignalHandler _fileChangedSignal;
+	private FileChangedSignalHandler? _fileChangedSignal;
 	private Callable _fileChangedSignalCallable;
 	public event FileChangedSignalHandler FileChangedSignal
 	{
@@ -132,7 +132,7 @@ public partial class Terrain3DTextureAsset : Terrain3DAssetResource
 	}
 
 	public new delegate void SettingChangedSignalHandler();
-	private SettingChangedSignalHandler _settingChangedSignal;
+	private SettingChangedSignalHandler? _settingChangedSignal;
 	private Callable _settingChangedSignalCallable;
 	public event SettingChangedSignalHandler SettingChangedSignal
 	{

@@ -101,7 +101,7 @@ public partial class Terrain3DData : GodotObject
 	}
 
 	public new delegate void MapsChangedSignalHandler();
-	private MapsChangedSignalHandler _mapsChangedSignal;
+	private MapsChangedSignalHandler? _mapsChangedSignal;
 	private Callable _mapsChangedSignalCallable;
 	public event MapsChangedSignalHandler MapsChangedSignal
 	{
@@ -125,7 +125,7 @@ public partial class Terrain3DData : GodotObject
 	}
 
 	public new delegate void RegionMapChangedSignalHandler();
-	private RegionMapChangedSignalHandler _regionMapChangedSignal;
+	private RegionMapChangedSignalHandler? _regionMapChangedSignal;
 	private Callable _regionMapChangedSignalCallable;
 	public event RegionMapChangedSignalHandler RegionMapChangedSignal
 	{
@@ -149,7 +149,7 @@ public partial class Terrain3DData : GodotObject
 	}
 
 	public new delegate void HeightMapsChangedSignalHandler();
-	private HeightMapsChangedSignalHandler _heightMapsChangedSignal;
+	private HeightMapsChangedSignalHandler? _heightMapsChangedSignal;
 	private Callable _heightMapsChangedSignalCallable;
 	public event HeightMapsChangedSignalHandler HeightMapsChangedSignal
 	{
@@ -173,7 +173,7 @@ public partial class Terrain3DData : GodotObject
 	}
 
 	public new delegate void ControlMapsChangedSignalHandler();
-	private ControlMapsChangedSignalHandler _controlMapsChangedSignal;
+	private ControlMapsChangedSignalHandler? _controlMapsChangedSignal;
 	private Callable _controlMapsChangedSignalCallable;
 	public event ControlMapsChangedSignalHandler ControlMapsChangedSignal
 	{
@@ -197,7 +197,7 @@ public partial class Terrain3DData : GodotObject
 	}
 
 	public new delegate void ColorMapsChangedSignalHandler();
-	private ColorMapsChangedSignalHandler _colorMapsChangedSignal;
+	private ColorMapsChangedSignalHandler? _colorMapsChangedSignal;
 	private Callable _colorMapsChangedSignalCallable;
 	public event ColorMapsChangedSignalHandler ColorMapsChangedSignal
 	{
@@ -221,7 +221,7 @@ public partial class Terrain3DData : GodotObject
 	}
 
 	public new delegate void MapsEditedSignalHandler(Aabb editedArea);
-	private MapsEditedSignalHandler _mapsEditedSignal;
+	private MapsEditedSignalHandler? _mapsEditedSignal;
 	private Callable _mapsEditedSignalCallable;
 	public event MapsEditedSignalHandler MapsEditedSignal
 	{

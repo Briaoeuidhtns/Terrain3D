@@ -101,7 +101,7 @@ public partial class Terrain3D : Node3D
 	}
 
 	public new delegate void MaterialChangedSignalHandler();
-	private MaterialChangedSignalHandler _materialChangedSignal;
+	private MaterialChangedSignalHandler? _materialChangedSignal;
 	private Callable _materialChangedSignalCallable;
 	public event MaterialChangedSignalHandler MaterialChangedSignal
 	{
@@ -125,7 +125,7 @@ public partial class Terrain3D : Node3D
 	}
 
 	public new delegate void AssetsChangedSignalHandler();
-	private AssetsChangedSignalHandler _assetsChangedSignal;
+	private AssetsChangedSignalHandler? _assetsChangedSignal;
 	private Callable _assetsChangedSignalCallable;
 	public event AssetsChangedSignalHandler AssetsChangedSignal
 	{

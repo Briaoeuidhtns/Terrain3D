@@ -16,3 +16,5 @@ How To Generate Bindings
 1. Generate, and look for errors or warnings to address.
 1. Move the generated C# files to `project/addons/terrain_3d/csharp` in your project.
 1. In your project, build the C# project.
+
+The native Terrain3DAssetResource is abstract. The wrapper generator may omit it while generating its concrete Terrain3DMeshAsset and Terrain3DTextureAsset descendants. Keep the hand-maintained Terrain3DAssetResource.cs alongside regenerated files: it provides the real abstract Resource inheritance and dispatches binding to the concrete wrappers. Do not replace it with an instantiable native wrapper; ClassDB cannot instantiate abstract native assets.

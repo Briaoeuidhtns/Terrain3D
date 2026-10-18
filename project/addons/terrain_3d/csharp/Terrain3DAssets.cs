@@ -90,7 +90,7 @@ public partial class Terrain3DAssets : Resource
 	}
 
 	public new delegate void IdsSwappedSignalHandler(long type, long oldId, long newId);
-	private IdsSwappedSignalHandler _idsSwappedSignal;
+	private IdsSwappedSignalHandler? _idsSwappedSignal;
 	private Callable _idsSwappedSignalCallable;
 	public event IdsSwappedSignalHandler IdsSwappedSignal
 	{
@@ -114,7 +114,7 @@ public partial class Terrain3DAssets : Resource
 	}
 
 	public new delegate void MeshesChangedSignalHandler();
-	private MeshesChangedSignalHandler _meshesChangedSignal;
+	private MeshesChangedSignalHandler? _meshesChangedSignal;
 	private Callable _meshesChangedSignalCallable;
 	public event MeshesChangedSignalHandler MeshesChangedSignal
 	{
@@ -138,7 +138,7 @@ public partial class Terrain3DAssets : Resource
 	}
 
 	public new delegate void TexturesChangedSignalHandler();
-	private TexturesChangedSignalHandler _texturesChangedSignal;
+	private TexturesChangedSignalHandler? _texturesChangedSignal;
 	private Callable _texturesChangedSignalCallable;
 	public event TexturesChangedSignalHandler TexturesChangedSignal
 	{
