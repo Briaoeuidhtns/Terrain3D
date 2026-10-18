@@ -842,9 +842,11 @@ void Terrain3DMaterial::initialize(Terrain3D *p_terrain) {
 	update(FULL_REBUILD);
 }
 
-void Terrain3DMaterial::uninitialize() {
-	LOG(INFO, "Uninitializing material");
-	_terrain = nullptr;
+void Terrain3DMaterial::uninitialize(Terrain3D *p_terrain) {
+	if (_terrain == p_terrain) {
+		LOG(INFO, "Uninitializing material");
+		_terrain = nullptr;
+	}
 }
 
 void Terrain3DMaterial::destroy() {

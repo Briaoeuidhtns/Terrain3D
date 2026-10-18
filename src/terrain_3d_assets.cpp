@@ -449,9 +449,11 @@ void Terrain3DAssets::initialize(Terrain3D *p_terrain) {
 	update_mesh_list();
 }
 
-void Terrain3DAssets::uninitialize() {
-	LOG(INFO, "Uninitializing assets");
-	_terrain = nullptr;
+void Terrain3DAssets::uninitialize(Terrain3D *p_terrain) {
+	if (_terrain == p_terrain) {
+		LOG(INFO, "Uninitializing assets");
+		_terrain = nullptr;
+	}
 }
 
 void Terrain3DAssets::destroy() {

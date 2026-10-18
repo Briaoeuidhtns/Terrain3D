@@ -50,33 +50,8 @@ void Terrain3D::_initialize() {
 		LOG(DEBUG, "Creating instancer");
 		_instancer = memnew(Terrain3DInstancer);
 	}
-	// Connect signals
-	// Any region was changed, update region labels
-	if (!_data->is_connected("region_map_changed", callable_mp(this, &Terrain3D::update_region_labels))) {
-		LOG(DEBUG, "Connecting _data::region_map_changed signal to set_show_region_locations()");
-		_data->connect("region_map_changed", callable_mp(this, &Terrain3D::update_region_labels));
-	}
-	// Any region was changed, regenerate collision if enabled
-	if (!_data->is_connected("region_map_changed", callable_mp(_collision, &Terrain3DCollision::build))) {
-		LOG(DEBUG, "Connecting _data::region_map_changed signal to build()");
-		_data->connect("region_map_changed", callable_mp(_collision, &Terrain3DCollision::build));
-	}
-	// Any map was regenerated or regions changed, update material uniforms without rebuilding shaders
-	if (!_data->is_connected("maps_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::REGION_ARRAYS))) {
-		LOG(DEBUG, "Connecting _data::maps_changed signal to _material->_update()");
-		_data->connect("maps_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::REGION_ARRAYS));
-	}
-	// Height map was regenerated, update aabbs
-	if (!_data->is_connected("height_maps_changed", callable_mp(this, &Terrain3D::_update_mesher_aabbs))) {
-		LOG(DEBUG, "Connecting _data::height_maps_changed signal to update_aabbs()");
-		_data->connect("height_maps_changed", callable_mp(this, &Terrain3D::_update_mesher_aabbs));
-	}
-	// Texture assets changed, update material uniforms without rebuilding shaders
-	if (!_assets->is_connected("textures_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::TEXTURE_ARRAYS))) {
-		LOG(DEBUG, "Connecting _assets.textures_changed to _material->update()");
-		_assets->connect("textures_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::TEXTURE_ARRAYS));
-	}
-	// Initialize the system
+	// Data loading emits map signals. A shared external material may still be
+	// bound to the previous scene, so connect it only after initialization.
 	if (!_initialized && _is_inside_world && is_inside_tree()) {
 		LOG(INFO, "Initializing main subsystems");
 		_data->initialize(this);
@@ -89,6 +64,28 @@ void Terrain3D::_initialize() {
 		_update_displacement_buffer();
 		_initialized = true;
 		snap();
+	}
+	if (_initialized) {
+		// Any region was changed, update region labels
+		if (!_data->is_connected("region_map_changed", callable_mp(this, &Terrain3D::update_region_labels))) {
+			_data->connect("region_map_changed", callable_mp(this, &Terrain3D::update_region_labels));
+		}
+		// Any region was changed, regenerate collision if enabled
+		if (!_data->is_connected("region_map_changed", callable_mp(_collision, &Terrain3DCollision::build))) {
+			_data->connect("region_map_changed", callable_mp(_collision, &Terrain3DCollision::build));
+		}
+		// Any map was regenerated or regions changed, update material uniforms without rebuilding shaders
+		if (!_data->is_connected("maps_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::REGION_ARRAYS))) {
+			_data->connect("maps_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::REGION_ARRAYS));
+		}
+		// Height map was regenerated, update aabbs
+		if (!_data->is_connected("height_maps_changed", callable_mp(this, &Terrain3D::_update_mesher_aabbs))) {
+			_data->connect("height_maps_changed", callable_mp(this, &Terrain3D::_update_mesher_aabbs));
+		}
+		// Texture assets changed, update material uniforms without rebuilding shaders
+		if (!_assets->is_connected("textures_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::TEXTURE_ARRAYS))) {
+			_assets->connect("textures_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::TEXTURE_ARRAYS));
+		}
 	}
 	update_configuration_warnings();
 }
@@ -561,6 +558,16 @@ void Terrain3D::set_data_directory(String p_dir) {
 }
 
 void Terrain3D::set_assets(const Ref<Terrain3DAssets> &p_assets) {
+	if (_assets == p_assets) {
+		return;
+	}
+	if (_assets.is_valid() && _material.is_valid() &&
+			_assets->is_connected("textures_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::TEXTURE_ARRAYS))) {
+		_assets->disconnect("textures_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::TEXTURE_ARRAYS));
+	}
+	if (_assets.is_valid()) {
+		_assets->uninitialize(this);
+	}
 	SET_IF_DIFF(_assets, p_assets);
 	LOG(INFO, "Setting asset list");
 	_initialized = false;
@@ -766,6 +773,20 @@ void Terrain3D::snap() {
 }
 
 void Terrain3D::set_material(const Ref<Terrain3DMaterial> &p_material) {
+	if (_material == p_material) {
+		return;
+	}
+	if (_data && _material.is_valid() &&
+			_data->is_connected("maps_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::REGION_ARRAYS))) {
+		_data->disconnect("maps_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::REGION_ARRAYS));
+	}
+	if (_assets.is_valid() && _material.is_valid() &&
+			_assets->is_connected("textures_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::TEXTURE_ARRAYS))) {
+		_assets->disconnect("textures_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::TEXTURE_ARRAYS));
+	}
+	if (_material.is_valid()) {
+		_material->uninitialize(this);
+	}
 	SET_IF_DIFF(_material, p_material);
 	LOG(INFO, "Setting material");
 	_initialized = false;
@@ -1316,11 +1337,15 @@ void Terrain3D::_notification(const int p_what) {
 			_destroy_instancer();
 			_destroy_mouse_picking();
 			_destroy_displacement_buffer();
+			if (_data && _material.is_valid() &&
+					_data->is_connected("maps_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::REGION_ARRAYS))) {
+				_data->disconnect("maps_changed", callable_mp(_material.ptr(), &Terrain3DMaterial::update).bind(Terrain3DMaterial::REGION_ARRAYS));
+			}
 			if (_assets.is_valid()) {
-				_assets->uninitialize();
+				_assets->uninitialize(this);
 			}
 			if (_material.is_valid()) {
-				_material->uninitialize();
+				_material->uninitialize(this);
 			}
 			_initialized = false;
 			break;

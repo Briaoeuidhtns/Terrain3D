@@ -127,7 +127,7 @@ public:
 	~Terrain3DMaterial() { destroy(); }
 	void initialize(Terrain3D *p_terrain);
 	bool is_initialized() { return _terrain != nullptr; }
-	void uninitialize();
+	void uninitialize(Terrain3D *p_terrain);
 	void destroy();
 
 	void update(const uint32_t p_flags = UNIFORMS_ONLY);
